@@ -1,39 +1,40 @@
-import reactImage from "./assets/react-core-concepts.png";
-import componentImage from "./assets/components.png";
-import { CORE_CONCEPTS } from "./data.js";
-
-const reactDescriptions = ["Fundamental", "Crucial", "Core"];
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-function Header() {
-  const description = reactDescriptions[getRandomInt(3)];
-
-  return (
-    <header>
-      <img src={reactImage} alt="Stylized atom" />
-      <h1>React Essentials</h1>
-      <p>
-        {description} React concepts you will need for almost any app you are
-        going to build!
-      </p>
-    </header>
-  );
-}
-
-function CoreConcept(props) {
-  return (
-    <li>
-      <img src={props.image} alt="" />
-      <h3> {props.title} </h3>
-      <p> {props.description} </p>
-    </li>
-  );
-}
+import { useState } from "react";
+import { CORE_CONCEPTS, EXAMPLES } from "./data.js";
+import Header from "./components/Header/Header.jsx";
+import CoreConcept from "./components/CoreConcept/CoreConcept.jsx";
+import TabButton from "./components/TabButton.jsx";
 
 function App() {
+  /* console.log("App function runs"); */
+
+  let tabContent = <div id="tab-content">Please select a topic</div>;
+
+  /* useState hook to manage component state (data)
+   const [name, setName] = useState(initialState);
+
+    setName is a function that can be used to update the state
+    setName(newState);
+    */
+  const [selectedTopic, setSelectedTopic] = useState(); // default = undefined
+
+  if (selectedTopic) {
+    tabContent = (
+      <div id="tab-content">
+        <h3>{EXAMPLES[selectedTopic].title}</h3>
+        <p>{EXAMPLES[selectedTopic].description}</p>
+        <pre>
+          <code>{EXAMPLES[selectedTopic].code}</code>
+        </pre>
+      </div>
+    );
+  }
+
+  function handleClickSelected(selectedButton) {
+    setSelectedTopic(selectedButton);
+    /* console.log("Selected button: ", selectedButton);
+    console.log("Selected topic: ", selectedTopic); */
+  }
+
   return (
     <div>
       <Header />
@@ -44,16 +45,49 @@ function App() {
             {CORE_CONCEPTS.map((concept, index) => (
               <CoreConcept
                 key={index}
-                title={concept.title}
+                /* title={concept.title}
                 description={concept.description}
-                image={concept.image}
+                image={concept.image} */
+                {...concept}
               />
             ))}
 
-            {<CoreConcept {...CORE_CONCEPTS[0]} />}
+            <CoreConcept {...CORE_CONCEPTS[0]} />
           </ul>
         </section>
-        <h2>Time to get started!</h2>
+        <section id="examples">
+          <menu>
+            {CORE_CONCEPTS.map((concept, index) => (
+              <TabButton
+                key={index}
+                isSelected={selectedTopic === concept.title.toLowerCase()}
+                /* function as a prop 
+                arrow function is used to pass the argument to the function */
+                onClicked={() =>
+                  handleClickSelected(concept.title.toLowerCase())
+                }
+              >
+                {concept.title}
+              </TabButton>
+            ))}
+          </menu>
+
+          {tabContent}
+
+          {/* {selectedTopic === undefined ? (
+            <div id="tab-content">Please select a topic</div>
+          ) : null}
+
+          {selectedTopic ? (
+            <div id="tab-content">
+              <h3>{EXAMPLES[selectedTopic].title}</h3>
+              <p>{EXAMPLES[selectedTopic].description}</p>
+              <pre>
+                <code>{EXAMPLES[selectedTopic].code}</code>
+              </pre>
+            </div>
+          ) : null} */}
+        </section>
       </main>
     </div>
   );
