@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CORE_CONCEPTS, EXAMPLES } from "../../data.js";
 import TabButton from "../TabButton.jsx";
 import Section from "../Section.jsx";
+import Tabs from "../Tabs.jsx";
 
 export default function Examples() {
   let tabContent = <div id="tab-content">Please select a topic</div>;
@@ -35,6 +36,29 @@ export default function Examples() {
   return (
     <section>
       <Section title="Examples" id="examples">
+        <Tabs
+          buttonsContainer="menu"
+          buttons={
+            <>
+              {CORE_CONCEPTS.map((concept, index) => (
+                <TabButton
+                  key={index}
+                  isSelected={selectedTopic === concept.title.toLowerCase()}
+                  /* function as a prop 
+                      arrow function is used to pass the argument to the function */
+                  onClicked={() =>
+                    handleClickSelected(concept.title.toLowerCase())
+                  }
+                >
+                  {concept.title}
+                </TabButton>
+              ))}
+            </>
+          }
+        >
+          {tabContent}
+        </Tabs>
+
         <menu>
           {CORE_CONCEPTS.map((concept, index) => (
             <TabButton
